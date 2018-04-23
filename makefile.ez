@@ -1,0 +1,50 @@
+TARGETS=bin\kscldr.exe
+
+DRIVERDIR=sys\obj%BUILD_ALT_DIR%\%_BUILDARCH%
+USERDIR=user\obj%BUILD_ALT_DIR%\%_BUILDARCH%
+
+CLEAN_DIRS=bin sys\obj%BUILD_ALT_DIR% user\obj%BUILD_ALT_DIR%
+CLEAN_FILES=*.wrn *.err *.log sys\*.wrn sys\*.err sys\*.log user\*.wrn user\*.err user\*.log 
+REALCLEAN_FILES=*.pvk *.pfx *.cer
+
+all: $(TARGETS)
+
+realclean: clean
+	cmd.exe /c FOR %f IN ($(REALCLEAN_FILES)) DO @IF EXIST %f DEL /Q %f
+
+clean:
+	cmd.exe /c FOR %d IN ($(CLEAN_DIRS)) DO @IF EXIST %d RD /S /Q %d
+	cmd.exe /c FOR %f IN ($(CLEAN_FILES)) DO @IF EXIST %f DEL /Q %f
+
+bin\kscldr.sys: bin $(DRIVERDIR)\kscldr.sys testing.pfx
+	cmd.exe /c COPY $(DRIVERDIR)\kscldr.sys $@
+	signtool sign /v /f testing.pfx $@
+
+bin\kscldr.exe: bin $(USERDIR)\kscldr.exe
+	cmd.exe /c COPY $(USERDIR)\kscldr.exe $@
+
+bin:
+	@cmd.exe /c MKDIR bin
+
+# Descend into subdirectories manually because relying on the dirs file results
+# in "fatal" error that sources file is absent which terminates the nmake
+# sequence
+$(USERDIR)\kscldr.exe: bin\kscldr.sys
+	cd user
+	build -cZMg
+	cd ..
+
+# Descend into subdirectories manually because relying on the dirs file results
+# in "fatal" error that sources file is absent which terminates the nmake
+# sequence
+$(DRIVERDIR)\kscldr.sys:
+	cd sys
+	build -cZMg
+	cd ..
+
+testing.pfx: testing.cer testing.pvk
+	pvk2pfx -pvk testing.pvk -spc testing.cer -pfx testing.pfx 
+
+testing.cer testing.pvk:
+	makecert -sv testing.pvk -n CN=Test_Signing_Cert_DO_NOT_TRUST testing.cer -b 06/19/2017 -e 06/19/2067 -r
+

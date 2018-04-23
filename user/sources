@@ -1,0 +1,23 @@
+TARGETNAME=kscldr
+TARGETTYPE=PROGRAM
+UMTYPE=console
+# To go ANSI, comment out the following two lines
+C_DEFINES=-DUNICODE -D_UNICODE
+UMENTRY=wmain
+USE_MSVCRT=1
+
+MSC_WARNING_LEVEL=/W4 /WX
+
+TARGETLIBS=\
+    $(SDK_LIB_PATH)\kernel32.lib \
+    $(SDK_LIB_PATH)\advapi32.lib \
+    $(SDK_LIB_PATH)\user32.lib
+
+INCLUDES=\
+    $(INCLUDES); \
+    $(DDK_INC_PATH)\..\crt; \
+    ..\inc
+
+SOURCES=\
+    kscldr_u.c \
+    resource.rc

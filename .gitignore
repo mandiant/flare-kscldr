@@ -1,0 +1,24 @@
+# Build output files
+*.exe
+*.res
+*.ilk
+*.pdb
+*.obj
+*.sys
+
+# e.g. sys/objchk_win7_amd64
+obj???_*_*
+
+# DDK
+*.log
+*.wrn
+*.err
+
+# Testsigning certificate data
+*.pvk
+*.pfx
+*.cer
+
+# Vim temporary files (first two only)
+*.swp
+*.swo
