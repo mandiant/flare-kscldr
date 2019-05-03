@@ -1,5 +1,8 @@
 # Kernel Shellcode Loader
 
+FLARE kernel shellcode loader. For discussion and example usage, see the blog:
+[Loading Kernel Shellcode](https://www.fireeye.com/blog/threat-research/2018/04/loading-kernel-shellcode.html).
+
 # Build
 
 ## Building the Driver
